@@ -1,12 +1,13 @@
 pragma foreign_keys = ON;
 
+-- Creating tables for the relevant data we need to store for the library
 create table books (
     id integer primary key autoincrement not null,
     title varchar(255) not null,
     author varchar(255) not null,
     ISBN integer not null,
     quantity integer not null,
-    status varchar(255) not null,
+    status varchar(255) not null default('Available'),
     image blob
 )
 
@@ -14,7 +15,7 @@ create table members (
     id integer primary key autoincrement not null,
     member_name varchar(255) not null,
     membership_status varchar(255) not null,
-    number_of_loans integer not null 
+    number_of_loans integer not null
 )
 
 create table loans (
@@ -25,21 +26,42 @@ create table loans (
     FOREIGN KEY (book) REFERENCES books(id),
     FOREIGN KEY (member) REFERENCES members(id)
 )
+-- LIBRARIAN QUERIES
+-- Adding a book into the catalogue
+insert into books (title, author, ISBN, quantity) values ('Developing information systems', 'James Cadle', 1, 9);
+insert into books (title, author, ISBN, quantity, status) values ('Limitless', 'Tim Peaker', 2, 0, 'Unavailable')
 
-insert into books (title, author, ISBN, quantity, status) values ('Developing information systems', 'James Cadle', 1, 9, 'Available');
+-- Edit a books information
+update books set quantity = 1, status = 'Available' where ISBN = 2
 
+-- Delete a book
+delete from books where ISBN= 1;
+
+-- Adding a member into the registry
 insert into members (member_name, membership_status, number_of_loans) values ('Lewis Fisher', 'Low Bandwith', 1);
 
+-- MEMBER QUERIES
+-- Adding a loan instance to the loans table (Borrowing a book)
 insert into loans (book, member, due_date) values (1, 1, '2020-12-01');
 
+-- Deleting a loan instance (Returning a book)
+delete from loans where book = 1;
+
+-- Editing membership details
+update members set member_name = 'Andy Gooding';
+----------------------------------------------------------------------------------------------------------------------
+-- Viewing the tables
 select * from books;
 
 select * from members;
 
 select * from loans;
 
+-- Joins the books, members and loans tables together based on ID so that the loans table shows useful information
+-- such as which book is on loan an to whom
 select title, member_name from loans JOIN books ON books.id = loans.book, members ON members.id = loans.member;
 
+-- delete the tables
 drop table books;
 drop table members;
 drop table loans;
