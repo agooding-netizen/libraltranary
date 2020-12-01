@@ -1,0 +1,45 @@
+pragma foreign_keys = ON;
+
+create table books (
+    id integer primary key autoincrement not null,
+    title varchar(255) not null,
+    author varchar(255) not null,
+    ISBN integer not null,
+    quantity integer not null,
+    status varchar(255) not null,
+    image blob
+)
+
+create table members (
+    id integer primary key autoincrement not null,
+    member_name varchar(255) not null,
+    membership_status varchar(255) not null,
+    number_of_loans integer not null 
+)
+
+create table loans (
+    id integer primary key autoincrement not null,
+    book integer not null,
+    member integer not null,
+    due_date text not null,
+    FOREIGN KEY (book) REFERENCES books(id),
+    FOREIGN KEY (member) REFERENCES members(id)
+)
+
+insert into books (title, author, ISBN, quantity, status) values ('Developing information systems', 'James Cadle', 1, 9, 'Available');
+
+insert into members (member_name, membership_status, number_of_loans) values ('Lewis Fisher', 'Low Bandwith', 1);
+
+insert into loans (book, member, due_date) values (1, 1, '2020-12-01');
+
+select * from books;
+
+select * from members;
+
+select * from loans;
+
+select title, member_name from loans JOIN books ON books.id = loans.book, members ON members.id = loans.member;
+
+drop table books;
+drop table members;
+drop table loans;
