@@ -70,6 +70,23 @@ def get_book_information():
     return f'Book added to catalogue'
 
 
+@app.route('/view_books', methods=['GET'])
+def view_books():
+
+    connection = get_db()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * from books")
+    s = "<table style='border:1px solid red'> <tr><td>ID</td><td>Title</td><td>Author</td><td>ISBN</td><td>Quantity</td><td>Status</td><td>Image</td><tr>"
+    for row in cursor:
+        s = s + "<tr>"
+        for x in row:
+            s = s + "<td>" + str(x) + "</td>"
+    s = s + "</tr>"
+    connection.close()
+
+    return "<html><body>" + s + "</body></html>"
+
+
 if __name__ == '__main__':
     app.run(host='localhost', port='8080', debug=True)
 
