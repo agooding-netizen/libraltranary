@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, g
+from flask import Flask, g, request
 
 DATABASE = r'C:\libraltranary\library.db'
 
@@ -35,7 +35,6 @@ with app.app_context():
     db.commit()
 
 
-@app.route('/create_book/<string:title>/<string:author>/<int:ISBN>/<int:quantity>')
 def create_book(title, author, ISBN, quantity):
     create_book_query = """ INSERT INTO books (title, author, ISBN, quantity) VALUES (?, ?, ?, ?)"""
     data_tuple = (title, author, ISBN, quantity)
@@ -45,6 +44,29 @@ def create_book(title, author, ISBN, quantity):
     cursor.execute(create_book_query, data_tuple)
     database.commit()
     cursor.close()
+
+
+@app.route('/create_book', methods=['GET'])
+def render_create_book_form():
+    return '''
+    <form action='/create_book' method='post' />
+        Title: <input name='title' type='varchar'/>
+        Author: <input name='author' type='varchar'/>
+        ISBN: <input name='isbn' type='int'/>
+        Quantity: <input name='quantity' type='int'/>
+        <input value='Create' type='submit' />
+    </form>
+    '''
+
+
+@app.route('/create_book', methods=['POST'])
+def get_book_information():
+    title = request.form.get('title')
+    author = request.form.get('author')
+    isbn = request.form.get('isbn')
+    quantity = request.form.get('quantity')
+
+    create_book(title, author, isbn, quantity)
     return f'Book added to catalogue'
 
 
