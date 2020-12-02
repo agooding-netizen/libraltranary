@@ -105,3 +105,11 @@ body {
 .td_book_info {
     width: 33%;
 }
+
+.center_table, .tr_center, .td_center {
+    border: 1px solid white;
+    border-collapse: collapse;
+    text-align: center;
+    font-family: "Comic Sans", cursive;
+    margin: auto;
+}
