@@ -26,6 +26,18 @@ body {
   font-family: "Comic Sans", cursive;
 }
 
+.centered_button {
+  background-color: white;
+  border: solid 1px;
+  color: black;
+  width: 50%;
+  text-decoration: none;
+  font-size: 16px;
+  font-family: "Comic Sans", cursive;
+  display: block;
+  margin: auto;
+}
+
 .login_button {
   background-color: white;
   border: none;
@@ -88,4 +100,8 @@ body {
 
 .td_home {
     width: 50%;
+}
+
+.td_book_info {
+    width: 33%;
 }
