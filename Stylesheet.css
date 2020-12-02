@@ -105,3 +105,8 @@ body {
 .td_book_info {
     width: 33%;
 }
+
+.overdue_header {
+    color: red;
+    text-align: left;
+}
