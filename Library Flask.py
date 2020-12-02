@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask, g, request, render_template
 
-DATABASE = r'C:\libraltranary\library.db'
+DATABASE = 'library.db'
 
 app = Flask(__name__)
 
@@ -60,20 +60,40 @@ def render_create_book_form():
 
 @app.route('/create_book', methods=['POST'])
 def get_book_information():
-    title = request.form.get('title')
-    author = request.form.get('author')
-    status = request.form.get('status')
-    quantity = request.form.get('quantity')
+    fetch_book_info = """ SELECT title, author, status, quantity from books; """
+
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute(fetch_book_info)
+
+    title = request.cursor.get('title')
+    author = request.cursor.get('author')
+    status = request.cursor.get('status')
+    quantity = request.cursor.get('quantity')
 
     create_book(title, author, status, quantity)
     return f'Book added to catalogue'
 
 
-@app.route('/test', methods=['GET'])
-def get_book_info():
-    return render_template('book_information.html', title="test", author="beth", quantity=1, status="reserved")
+@app.route('/books', methods=['GET'])
+def get_book_info(title):
+    fetch_book_info = """ SELECT title, author, quantity, status from books where title = """ + str(title) + """; """
+
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute(fetch_book_info)
+
+    data = cursor.fetchone()
+
+    return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3])
+
+
+@app.route('/')
+def home():
+    return render_template('Homepage.html')
 
 
 if __name__ == '__main__':
     app.run(host='localhost', port='8080', debug=True)
+
 
