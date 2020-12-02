@@ -138,7 +138,7 @@ body {
   }
   .imgRemove::after{
     content: ' \21BA';
-    color: #000;;
+    color: #fff;
     font-weight: 900;
     border-radius: 8px;
     cursor: pointer;
