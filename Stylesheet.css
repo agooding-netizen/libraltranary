@@ -26,6 +26,17 @@ body {
   font-family: "Comic Sans", cursive;
 }
 
+.centered_button {
+  background-color: white;
+  border: solid 1px;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: "Comic Sans", cursive;
+}
+
 .login_button {
   background-color: white;
   border: none;
