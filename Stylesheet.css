@@ -50,6 +50,19 @@ body {
   font-family: "Comic Sans", cursive;
 }
 
+.submit_button {
+  background-color: white;
+  border: none;
+  color: black;
+  padding: 5px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: "Comic Sans", cursive;
+  margin: 10px;
+}
+
 .librarian_button {
   background-color: black;
   border: none;
@@ -94,13 +107,57 @@ body {
   }
 }
 
-.button:hover {
+.button:hover, .centered_button:hover {
     background-color: #33DCFF;
 }
 
 .td_home {
     width: 50%;
 }
+
+  .form-input {
+    width:100px;
+    padding:3px;
+    background:#027da6;
+  }
+  .form-input input {
+    display:none;
+  }
+  .form-input label {
+    display:block;
+    width:100px;
+    height: auto;
+    max-height: 100px;
+    background-color: #fff;
+    border-radius:10px;
+    cursor:pointer;
+  }
+
+  .form-input img {
+    width:100px;
+    height: 100px;
+  }
+
+  .imgRemove{
+    position: relative;
+    bottom: 114px;
+    left: 100%;
+    background-color: transparent;
+    border: none;
+    font-size: 30px;
+    outline: none;
+
+  }
+  .imgRemove::after{
+    content: ' \21BA';
+    color: #fff;
+    font-weight: 900;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .small{
+    color: white;
+  }
 
 .td_book_info {
     width: 33%;
@@ -112,4 +169,9 @@ body {
     text-align: center;
     font-family: "Comic Sans", cursive;
     margin: auto;
+}
+
+.overdue_header {
+    color: red;
+    text-align: left;
 }
