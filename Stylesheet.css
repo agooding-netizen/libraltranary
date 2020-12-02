@@ -4,19 +4,30 @@ body {
     font-family: "Comic Sans", cursive;
 }
 
-.center_table {
-    margin-left: auto;
-    margin-right: auto;
+.main {
+    padding-left: 30%;
+    padding-right: 30%;
 }
 
 .address_info {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: right;
 }
 
 .button {
-  background-color: white
+  background-color: white;
+  border: solid 1px;
+  color: black;
+  width: 50%;
+  float: left;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: "Comic Sans", cursive;
+}
+
+.login_button {
+  background-color: white;
   border: none;
   color: black;
   padding: 15px 32px;
@@ -25,6 +36,58 @@ body {
   display: inline-block;
   font-size: 16px;
   font-family: "Comic Sans", cursive;
+}
+
+.librarian_button {
+  background-color: black;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: "Comic Sans", cursive;
+}
+
+.vertical_line {
+  border-left: 5px solid black;
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  top: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
+
+.button:hover {
+    background-color: #33DCFF;
+}
+
+.td_home {
+    width: 50%;
 }
 
 .td_book_info {
