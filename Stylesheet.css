@@ -4,22 +4,21 @@ body {
     font-family: "Comic Sans", cursive;
 }
 
-.center_table {
-    margin-left: auto;
-    margin-right: auto;
+.main {
+    padding-left: 30%;
+    padding-right: 30%
 }
 
 .address_info {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: right;
 }
 
 .button {
   background-color: white
   border: none;
   color: black;
-  padding: 15px 32px;
+  width: 50%;
+  float: left;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -69,4 +68,12 @@ body {
   .column {
     width: 100%;
   }
+}
+
+.button:hover {
+    background-color: blue
+}
+
+.td_home {
+    width: 50%;
 }
