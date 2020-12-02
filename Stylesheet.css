@@ -6,7 +6,7 @@ body {
 
 .main {
     padding-left: 30%;
-    padding-right: 30%
+    padding-right: 30%;
 }
 
 .address_info {
@@ -27,7 +27,7 @@ body {
 }
 
 .login_button {
-  background-color: white
+  background-color: white;
   border: none;
   color: black;
   padding: 15px 32px;
@@ -56,7 +56,7 @@ body {
   position: absolute;
   left: 50%;
   margin-left: auto;
-  margin-right: auto
+  margin-right: auto;
   top: 0;
 }
 
