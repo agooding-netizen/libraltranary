@@ -94,7 +94,7 @@ body {
   }
 }
 
-.button:hover {
+.button:hover, .centered_button:hover {
     background-color: #33DCFF;
 }
 
