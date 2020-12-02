@@ -5,7 +5,6 @@ create table books (
     id integer primary key autoincrement not null,
     title varchar(255) not null,
     author varchar(255) not null,
-    ISBN integer not null,
     quantity integer not null,
     status varchar(255) not null default('Available'),
     image blob
@@ -28,14 +27,14 @@ create table loans (
 )
 -- LIBRARIAN QUERIES
 -- Adding a book into the catalogue
-insert into books (title, author, ISBN, quantity) values ('Developing information systems', 'James Cadle', 1, 9);
-insert into books (title, author, ISBN, quantity, status) values ('Limitless', 'Tim Peaker', 2, 0, 'Unavailable')
+insert into books (title, author, quantity) values ('Developing information systems', 'James Cadle', 9);
+insert into books (title, author, quantity, status) values ('Limitless', 'Tim Peaker', 0, 'Unavailable')
 
 -- Edit a books information
-update books set quantity = 1, status = 'Available' where ISBN = 2
+update books set quantity = 1, status = 'Available' where id = 2
 
 -- Delete a book
-delete from books where ISBN= 1;
+delete from books where id= 1;
 
 -- Adding a member into the registry
 insert into members (member_name, membership_status, number_of_loans) values ('Lewis Fisher', 'Low Bandwith', 1);

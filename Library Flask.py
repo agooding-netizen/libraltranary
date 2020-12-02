@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, g, request
+from flask import Flask, g, request, render_template
 
 DATABASE = r'C:\libraltranary\library.db'
 
@@ -27,7 +27,6 @@ with app.app_context():
             id integer primary key autoincrement not null,
             title varchar(255) not null,
             author varchar(255) not null,
-            ISBN integer not null,
             quantity integer not null,
             status varchar(255) not null default('Available'),
             image blob
@@ -35,9 +34,9 @@ with app.app_context():
     db.commit()
 
 
-def create_book(title, author, ISBN, quantity):
-    create_book_query = """ INSERT INTO books (title, author, ISBN, quantity) VALUES (?, ?, ?, ?)"""
-    data_tuple = (title, author, ISBN, quantity)
+def create_book(title, author, status, quantity):
+    create_book_query = """ INSERT INTO books (title, author, status, quantity) VALUES (?, ?, ?, ?)"""
+    data_tuple = (title, author, status, quantity)
 
     database = get_db()
     cursor = database.cursor()
@@ -52,7 +51,7 @@ def render_create_book_form():
     <form action='/create_book' method='post' />
         Title: <input name='title' type='varchar'/>
         Author: <input name='author' type='varchar'/>
-        ISBN: <input name='isbn' type='int'/>
+        Status: <input name='status' type='int'/>
         Quantity: <input name='quantity' type='int'/>
         <input value='Create' type='submit' />
     </form>
@@ -63,28 +62,16 @@ def render_create_book_form():
 def get_book_information():
     title = request.form.get('title')
     author = request.form.get('author')
-    isbn = request.form.get('isbn')
+    status = request.form.get('status')
     quantity = request.form.get('quantity')
 
-    create_book(title, author, isbn, quantity)
+    create_book(title, author, status, quantity)
     return f'Book added to catalogue'
 
 
-@app.route('/view_books', methods=['GET'])
-def view_books():
-
-    connection = get_db()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * from books")
-    s = "<table style='border:1px solid red'> <tr><td>ID</td><td>Title</td><td>Author</td><td>ISBN</td><td>Quantity</td><td>Status</td><td>Image</td><tr>"
-    for row in cursor:
-        s = s + "<tr>"
-        for x in row:
-            s = s + "<td>" + str(x) + "</td>"
-    s = s + "</tr>"
-    connection.close()
-
-    return "<html><body>" + s + "</body></html>"
+@app.route('/test', methods=['GET'])
+def get_book_info():
+    return render_template('book_information.html', title="test", author="beth", quantity=1, status="reserved")
 
 
 if __name__ == '__main__':
