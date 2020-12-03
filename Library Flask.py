@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask, g, request, render_template
 
-DATABASE = r'C:\libraltranary\library.db'
+DATABASE = 'library.db'
 
 app = Flask(__name__)
 
@@ -73,6 +73,24 @@ def get_book_information():
 
     create_book(title, author, status, quantity)
     return render_template('book_information.html', title=title, author=author, quantity=quantity, status=status)
+
+
+@app.route('/books', methods=['GET'])
+def get_book_info(title):
+    fetch_book_info = """ SELECT title, author, quantity, status from books where title = """ + str(title) + """; """
+
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute(fetch_book_info)
+
+    data = cursor.fetchone()
+
+    return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3])
+
+
+@app.route('/')
+def home():
+    return render_template('Homepage.html')
 
 
 if __name__ == '__main__':
