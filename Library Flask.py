@@ -88,6 +88,24 @@ def get_book_info():
     return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3])
 
 
+@app.route('/view_book', methods=['POST'])
+def find_book_search():
+    find_book_query = """ SELECT title, author, quantity, status FROM books WHERE title LIKE ?; """
+    search = str("%" + request.form.get("search") + "%")
+
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute(find_book_query, (search,))
+
+    data = cursor.fetchone()
+    if len(data) == 0:
+        find_book_query = """ SELECT title, author, quantity, status FROM books WHERE author LIKE ?; """
+        cursor.execute(find_book_query, (search,))
+        data = cursor.fetchone()
+
+    return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3])
+
+
 @app.route('/')
 def home():
     return render_template('Homepage.html')
