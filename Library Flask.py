@@ -76,8 +76,8 @@ def get_book_information():
 
 
 @app.route('/books', methods=['GET'])
-def get_book_info(title):
-    fetch_book_info = """ SELECT title, author, quantity, status from books where title = """ + str(title) + """; """
+def get_book_info():
+    fetch_book_info = """ SELECT title, author, quantity, status from books; """
 
     database = get_db()
     cursor = database.cursor()
@@ -95,4 +95,3 @@ def home():
 
 if __name__ == '__main__':
     app.run(host='localhost', port='8080', debug=True)
-
