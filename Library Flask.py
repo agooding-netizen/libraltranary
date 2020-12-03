@@ -45,34 +45,34 @@ def create_book(title, author, status, quantity):
     cursor.close()
 
 
+def convertToBinaryData(filename):
+    # Convert digital data to binary format
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData
+
+
+# The two app routes below do the following:
+# Renders a form where information about a new book can be added, then once the information is submitted it updates
+# the book database and then displays the new book information on its own page.
 @app.route('/create_book', methods=['GET'])
 def render_create_book_form():
-    return '''
-    <form action='/create_book' method='post' />
-        Title: <input name='title' type='varchar'/>
-        Author: <input name='author' type='varchar'/>
-        Status: <input name='status' type='int'/>
-        Quantity: <input name='quantity' type='int'/>
-        <input value='Create' type='submit' />
-    </form>
-    '''
+    return render_template("add_edit_book.html")
 
 
 @app.route('/create_book', methods=['POST'])
 def get_book_information():
-    fetch_book_info = """ SELECT title, author, status, quantity from books; """
+    title = request.form.get('title')
+    author = request.form.get('author')
+    quantity = int(request.form.get('copies'))
 
-    database = get_db()
-    cursor = database.cursor()
-    cursor.execute(fetch_book_info)
-
-    title = request.cursor.get('title')
-    author = request.cursor.get('author')
-    status = request.cursor.get('status')
-    quantity = request.cursor.get('quantity')
+    if quantity > 0:
+        status = 'Available'
+    else:
+        status = 'Unavailable'
 
     create_book(title, author, status, quantity)
-    return f'Book added to catalogue'
+    return render_template('book_information.html', title=title, author=author, quantity=quantity, status=status)
 
 
 @app.route('/books', methods=['GET'])
@@ -95,5 +95,4 @@ def home():
 
 if __name__ == '__main__':
     app.run(host='localhost', port='8080', debug=True)
-
 
