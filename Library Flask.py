@@ -1,9 +1,14 @@
+import imghdr
+import os
 import sqlite3
-from flask import Flask, g, request, render_template
+from flask import Flask, g, request, render_template, send_from_directory, abort
+from werkzeug.utils import secure_filename
 
 DATABASE = 'library.db'
 
 app = Flask(__name__)
+app.config['UPLOAD_PATH'] = 'uploads'
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 
 
 def get_db():
@@ -45,11 +50,13 @@ def create_book(title, author, status, quantity, image):
     cursor.close()
 
 
-def writeTofile(data, filename):
-    # Convert binary data to proper format and write it on Hard Disk
-    with open(filename, 'wb') as file:
-        file.write(data)
-    print("Stored blob data into: ", filename, "\n")
+def validate_image(stream):
+    header = stream.read(512)  # 512 bytes should be enough for a header check
+    stream.seek(0)  # reset stream pointer
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')
 
 # The two app routes below do the following:
 # Renders a form where information about a new book can be added, then once the information is submitted it updates
@@ -64,22 +71,37 @@ def get_book_information():
     title = request.form.get('title')
     author = request.form.get('author')
     quantity = int(request.form.get('copies'))
-    image = request.files['img_one'].read()
-    image_name = request.files['img_one'].filename
+    image = request.files['img_one']
+    image_blob = request.files['img_one'].read()
+    filename = secure_filename(image.filename)
+
+    if filename != '':
+        file_ext = os.path.splitext(filename)[1]
+        if file_ext in app.config['UPLOAD_EXTENSIONS'] or \
+                file_ext == validate_image(image.stream):
+            image.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        else:
+            abort(400)
 
     if quantity > 0:
         status = 'Available'
     else:
         status = 'Unavailable'
 
-    create_book(title, author, status, quantity, image)
+    create_book(title, author, status, quantity, image_blob)
 
-    image_path = r"C:\libraltranary\\" + image_name
-    writeTofile(image, image_path)
+    return render_template('book_information.html',
+                           title=title,
+                           author=author,
+                           quantity=quantity,
+                           status=status,
+                           image="/uploads/" + filename)
 
-    # Image not displaying - cant be found. Either path is wrong, or maybe need a page to render the image on and use that as the source??
 
-    return render_template('book_information.html', title=title, author=author, quantity=quantity, status=status, image=image_name)
+# TODO Need to make this a hyperlink from book information
+@app.route('/uploads/<filename>')
+def upload(filename):
+    return send_from_directory(app.config['UPLOAD_PATH'], filename)
 
 
 @app.route('/books', methods=['GET'])
