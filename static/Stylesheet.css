@@ -17,7 +17,7 @@ body {
 
 .button {
   background-color: white;
-  border: solid 1px;
+  border: groove 2px black;
   color: black;
   width: 50%;
   float: left;
@@ -25,17 +25,17 @@ body {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  font-family: "Comic Sans", cursive;
+  font-family: "Rancho";
 }
 
 .centered_button {
   background-color: white;
-  border: solid 1px;
+  border: groove 2px black;
   color: black;
   width: 50%;
   text-decoration: none;
   font-size: 16px;
-  font-family: "Comic Sans", cursive;
+  font-family: "Rancho";
   display: block;
   margin: auto;
 }
