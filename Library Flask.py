@@ -111,5 +111,25 @@ def home():
     return render_template('Homepage.html')
 
 
+@app.route('/login')
+def login():
+    return render_template('Login.html')
+
+
+@app.route('/user-login')
+def user_login():
+    return render_template('User-Login.html')
+
+
+@app.route('/librarian-login')
+def librarian_login():
+    return render_template('Librarian-Login.html')
+
+
+@app.route('/catalogue')
+def catalogue():
+    return render_template('Catalogue.html')
+
+
 if __name__ == '__main__':
     app.run(host='localhost', port='8080', debug=True)
