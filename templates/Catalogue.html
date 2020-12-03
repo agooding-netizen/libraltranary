@@ -8,7 +8,7 @@
 <body>
 <div class="main">
 
-    <h1 style="text-align:center" class="font-effect-fire-animation">
+    <h1 contenteditable spellcheck="false" class="h1_sign">
     Catalogue
     </h1>
 
@@ -23,12 +23,13 @@
             <tr class="tr_center">
                 <td class="td_center">
                     <form action="/view_book" method="post">
-                        <button class="btn-link" type="submit" name="search" value={{row[0]}}>{{row[0]}}</button>
+                        <button class="btn-link" type="submit" name="search" value={{row[0]}}>&emsp;{{row[0]}}&emsp;</button>
                     </form>
                 </td>
-                <td class="td_center">{{row[1]}}</td>
-                <td class="td_center">{{row[2]}}</td>
-                <td class="td_center">{{row[3]}}</tr>
+                <td class="td_center">&emsp;{{row[1]}}&emsp;</td>
+                <td class="td_center">&emsp;{{row[2]}}&emsp;</td>
+                <td class="td_center">&emsp;{{row[3]}}&emsp;</td>
+            </tr>
         {% endfor %}
     </table>
 
