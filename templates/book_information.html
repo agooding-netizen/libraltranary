@@ -31,6 +31,15 @@
     </table>
 
     <br/>
+    <div class="navbuttons" style="text-align:center;">
+        {% if status == "Available" %}
+            <button class="button" type="button">Borrow</button>
+            <button class="button" type="button">Reserve</button>
+        {% else %}
+            <button class="centered_button" type="button">Reserve</button>
+        {% endif %}
+    </div>
+
     <button class="centered_button" type="button" onclick="window.location.href='/catalogue'">Catalogue</button>
 
 </div>

@@ -104,22 +104,9 @@ def upload(filename):
     return send_from_directory(app.config['UPLOAD_PATH'], filename)
 
 
-@app.route('/books', methods=['GET'])
-def get_book_info():
-    fetch_book_info = """ SELECT title, author, quantity, status, image from books; """
-
-    database = get_db()
-    cursor = database.cursor()
-    cursor.execute(fetch_book_info)
-
-    data = cursor.fetchone()
-
-    return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3], image=data[4])
-
-
 @app.route('/view_book', methods=['POST'])
 def find_book_search():
-    find_book_query = """ SELECT title, author, quantity, status FROM books WHERE title LIKE ?; """
+    find_book_query = """ SELECT title, author, quantity, status, image FROM books WHERE title LIKE ?; """
     search = str("%" + request.form.get("search") + "%")
 
     database = get_db()
@@ -128,11 +115,12 @@ def find_book_search():
 
     data = cursor.fetchone()
     if len(data) == 0:
-        find_book_query = """ SELECT title, author, quantity, status FROM books WHERE author LIKE ?; """
+        find_book_query = """ SELECT title, author, quantity, status, image FROM books WHERE author LIKE ?; """
         cursor.execute(find_book_query, (search,))
         data = cursor.fetchone()
 
-    return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3])
+    return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3],
+                           image=data[4])
 
 
 @app.route('/')
