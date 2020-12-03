@@ -19,12 +19,13 @@
             <th>Quantity</th>
             <th>Status</th>
         </tr>
-        <!For loop goes here to cycle through database>
+        {% for row in table %}
         <tr class="tr_center">
-            <td class="td_center">Placeholder</td>
-            <td class="td_center">Placeholder</td>
-            <td class="td_center">Placeholder</td>
-            <td class="td_center">Placeholder</tr>
+            <td class="td_center">{{row[0]}}</td>
+            <td class="td_center">{{row[1]}}</td>
+            <td class="td_center">{{row[2]}}</td>
+            <td class="td_center">{{row[3]}}</tr>
+        {% endfor %}
     </table>
 
 </div>
