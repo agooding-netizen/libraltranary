@@ -128,7 +128,13 @@ def librarian_login():
 
 @app.route('/catalogue')
 def catalogue():
-    return render_template('Catalogue.html')
+    fetch_book_info = """ SELECT title, author, quantity, status from books; """
+
+    database = get_db()
+    cursor = database.cursor()
+    data = cursor.execute(fetch_book_info)
+
+    return render_template('Catalogue.html', table=data)
 
 
 if __name__ == '__main__':
