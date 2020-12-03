@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 DATABASE = 'library.db'
 
 app = Flask(__name__)
-app.config['UPLOAD_PATH']  = 'uploads'
+app.config['UPLOAD_PATH'] = 'uploads'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 
 
@@ -50,16 +50,6 @@ def create_book(title, author, status, quantity, image):
     cursor.close()
 
 
-def writeTofile(data, filename):
-    # Convert binary data to proper format and write it on Hard Disk
-    with open(filename, 'wb') as file:
-        file.write(data)
-    print("Stored blob data into: ", filename, "\n")
-    file.close()
-
-    return file
-
-
 def validate_image(stream):
     header = stream.read(512)  # 512 bytes should be enough for a header check
     stream.seek(0)  # reset stream pointer
@@ -100,9 +90,6 @@ def get_book_information():
 
     create_book(title, author, status, quantity, image_blob)
 
-    image_path = "../libraltranary/" + image.filename
-    writeTofile(image_blob, image_path)
-
     return render_template('book_information.html',
                            title=title,
                            author=author,
@@ -111,6 +98,7 @@ def get_book_information():
                            image="/uploads/" + filename)
 
 
+# TODO Need to make this a hyperlink from book information
 @app.route('/uploads/<filename>')
 def upload(filename):
     return send_from_directory(app.config['UPLOAD_PATH'], filename)
