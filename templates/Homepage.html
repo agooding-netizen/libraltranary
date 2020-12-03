@@ -15,19 +15,20 @@
         <img src="https://www.flaticon.com/svg/static/icons/svg/29/29302.svg" style="text-align: right" width="21" height="21">
     </h1>
 
-
-    <div class="topnav" style="text-align:center;">
-      <input type="text" placeholder="Title, Author, ISBN">
-    </div>
-
+    <form action="/view_book" method="post">
+        <div class="topnav" style="text-align:center;">
+            <input type="text" placeholder="Title/Author" id="name" name="search">
+        </div>
+        <div class="navbuttons" style="text-align:center;">
+            <button class="button" type="submit">Search</button>
+        </div>
+    </form>
     <br>
 
     <div class="navbuttons" style="text-align:center;">
         <button class="button" type="button" onclick="window.location.href='/catalogue'">Catalogue</button>
-        <button class="button" type="button" onclick="window.location.href='/login'">Log In</button>
+      <button class="button" type="button" onclick="window.location.href='/login'">Log In</button>
     </div>
-
-    <br>
 
     <table>
         <tr>
