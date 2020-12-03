@@ -178,3 +178,16 @@ body {
     color: red;
     text-align: left;
 }
+
+.btn-link {
+    border: none;
+    outline: none;
+    color: white;
+    background-color: transparent;
+    font-size: 30px
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    font-family: "Comic Sans", cursive;
+}
