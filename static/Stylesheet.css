@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Rancho&effect=fire-animation|neon');
+
 body {
     background-color: #027da6;
     color: white;
-    font-family: "Comic Sans", cursive;
+    font-family: "Rancho";
 }
 
 .main {
