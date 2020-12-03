@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask, g, request, render_template
 
-DATABASE = r'C:\libraltranary\library.db'
+DATABASE = 'library.db'
 
 app = Flask(__name__)
 
@@ -45,35 +45,53 @@ def create_book(title, author, status, quantity):
     cursor.close()
 
 
+def convertToBinaryData(filename):
+    # Convert digital data to binary format
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData
+
+
+# The two app routes below do the following:
+# Renders a form where information about a new book can be added, then once the information is submitted it updates
+# the book database and then displays the new book information on its own page.
 @app.route('/create_book', methods=['GET'])
 def render_create_book_form():
-    return '''
-    <form action='/create_book' method='post' />
-        Title: <input name='title' type='varchar'/>
-        Author: <input name='author' type='varchar'/>
-        Status: <input name='status' type='int'/>
-        Quantity: <input name='quantity' type='int'/>
-        <input value='Create' type='submit' />
-    </form>
-    '''
+    return render_template("add_edit_book.html")
 
 
 @app.route('/create_book', methods=['POST'])
 def get_book_information():
     title = request.form.get('title')
     author = request.form.get('author')
-    status = request.form.get('status')
-    quantity = request.form.get('quantity')
+    quantity = int(request.form.get('copies'))
+
+    if quantity > 0:
+        status = 'Available'
+    else:
+        status = 'Unavailable'
 
     create_book(title, author, status, quantity)
-    return f'Book added to catalogue'
+    return render_template('book_information.html', title=title, author=author, quantity=quantity, status=status)
 
 
-@app.route('/test', methods=['GET'])
+@app.route('/books', methods=['GET'])
 def get_book_info():
-    return render_template('book_information.html', title="test", author="beth", quantity=1, status="reserved")
+    fetch_book_info = """ SELECT title, author, quantity, status from books; """
+
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute(fetch_book_info)
+
+    data = cursor.fetchone()
+
+    return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3])
+
+
+@app.route('/')
+def home():
+    return render_template('Homepage.html')
 
 
 if __name__ == '__main__':
     app.run(host='localhost', port='8080', debug=True)
-
