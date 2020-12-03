@@ -98,6 +98,16 @@ def login():
     return render_template('Login.html')
 
 
+@app.route('/user-login')
+def user_login():
+    return render_template('User-Login.html')
+
+
+@app.route('/librarian-login')
+def librarian_login():
+    return render_template('Librarian-Login.html')
+
+
 @app.route('/catalogue')
 def catalogue():
     return render_template('Catalogue.html')
