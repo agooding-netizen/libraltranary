@@ -69,8 +69,7 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
-# Issue is - cannot display images that are in a different place to where the form collects the image from
-# Everything else works correctly
+# Picture uploads only work if you upload a NEW picture. Cannot pick one that exists in the folder with the same name.
 @app.route('/upload_image-<title>-<author>-<status>-<quantity>')
 def index(title, author, status, quantity):
     files = os.listdir(app.config['UPLOAD_PATH'])
