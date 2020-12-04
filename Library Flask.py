@@ -1,14 +1,14 @@
 import imghdr
 import os
 import sqlite3
-from flask import Flask, g, request, render_template, send_from_directory, abort
+from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, url_for
 from werkzeug.utils import secure_filename
 
 DATABASE = 'library.db'
 
 app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'uploads'
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.jpeg', '.JPG', '.JPEG', '.PNG']
 
 
 def get_db():
@@ -58,6 +58,26 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+
+@app.route('/upload_image')
+def index():
+    files = os.listdir(app.config['UPLOAD_PATH'])
+    return render_template('book_cover.html', files=files)
+
+
+@app.route('/upload_image', methods=['POST'])
+def upload_files():
+    uploaded_file = request.files['file']
+    filename = secure_filename(uploaded_file.filename)
+    if filename != '':
+        file_ext = os.path.splitext(filename)[1]
+        if file_ext not in app.config['UPLOAD_EXTENSIONS'] or \
+                file_ext != validate_image(uploaded_file.stream):
+            abort(400)
+        uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+    return redirect(url_for('index'))
+
+
 # The two app routes below do the following:
 # Renders a form where information about a new book can be added, then once the information is submitted it updates
 # the book database and then displays the new book information on its own page.
@@ -71,31 +91,28 @@ def get_book_information():
     title = request.form.get('title')
     author = request.form.get('author')
     quantity = int(request.form.get('copies'))
-    image = request.files['img_one']
-    image_blob = request.files['img_one'].read()
-    filename = secure_filename(image.filename)
-
-    if filename != '':
-        file_ext = os.path.splitext(filename)[1]
-        if file_ext in app.config['UPLOAD_EXTENSIONS'] or \
-                file_ext == validate_image(image.stream):
-            image.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-        else:
-            abort(400)
+    image_requested = request.form.get('image_request')
 
     if quantity > 0:
         status = 'Available'
     else:
         status = 'Unavailable'
 
-    create_book(title, author, status, quantity, image_blob)
+    if image_requested == "Yes":
+        return redirect(url_for('index'))
 
-    return render_template('book_information.html',
-                           title=title,
-                           author=author,
-                           quantity=quantity,
-                           status=status,
-                           image="/uploads/" + filename)
+    else:
+        filename = ""
+        image_blob = None
+
+        create_book(title, author, status, quantity, image_blob)
+
+        return render_template('book_information.html',
+                               title=title,
+                               author=author,
+                               quantity=quantity,
+                               status=status,
+                               image="/uploads/" + filename)
 
 
 # TODO Need to make this a hyperlink from book information
