@@ -25,7 +25,11 @@
                 {{quantity}} <br/>
                 {{status}} </td>
             <td>
-                <img src="{{image}}" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/450px-No_image_available.svg.png'" width="200" height="300">
+                {% if image %}
+                    <img src="{{url_for('upload', filename=image)}}" width="200" height="300">
+                {% else %}
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/450px-No_image_available.svg.png" width="200" height="300">
+                {% endif %}
             </td>
         </tr>
     </table>
