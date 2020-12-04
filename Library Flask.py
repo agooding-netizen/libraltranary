@@ -1,7 +1,7 @@
 import imghdr
 import os
 import sqlite3
-from flask import Flask, g, request, render_template, send_from_directory, abort
+from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, url_for
 from werkzeug.utils import secure_filename
 
 DATABASE = 'library.db'
@@ -114,13 +114,21 @@ def find_book_search():
     cursor.execute(find_book_query, (search,))
 
     data = cursor.fetchone()
-    if len(data) == 0:
+    if data is None:
         find_book_query = """ SELECT title, author, quantity, status, image FROM books WHERE author LIKE ?; """
         cursor.execute(find_book_query, (search,))
+
         data = cursor.fetchone()
+    if data is None:
+        return redirect(url_for('failed_search'))
 
     return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3],
                            image=data[4])
+
+
+@app.route('/', methods=['POST'])
+def failed_search():
+    return render_template('Homepage.html', found=False)
 
 
 @app.route('/')
