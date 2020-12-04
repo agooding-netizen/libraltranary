@@ -8,7 +8,7 @@ DATABASE = 'library.db'
 
 app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'uploads'
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.jpeg', '.JPG', '.JPEG', '.PNG']
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.jpeg']
 
 
 def get_db():
