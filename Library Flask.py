@@ -2,7 +2,7 @@ import imghdr
 import os
 import sqlite3
 from flask_login import LoginManager, UserMixin, login_required, login_user
-from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, Response
+from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, url_for
 from werkzeug.utils import secure_filename
 
 DATABASE = 'library.db'
