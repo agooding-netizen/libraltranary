@@ -154,14 +154,14 @@ def find_book_search():
                            image=data[4])
 
 
-@app.route('/', methods=['POST'])
+@app.route('/search-failed', methods=['GET', 'POST'])
 def failed_search():
     return render_template('Homepage.html', found=False)
 
 
 @app.route('/')
 def home():
-    return render_template('Homepage.html')
+    return render_template('Homepage.html', found=True)
 
 
 @app.route('/login', methods=['GET', 'POST'])
