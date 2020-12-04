@@ -62,7 +62,7 @@ with app.app_context():
             author varchar(255) not null,
             quantity integer not null,
             status varchar(255) not null default('Available'),
-            image blob
+            image text
 )''')
     db.commit()
 
@@ -115,14 +115,14 @@ def upload_files(title, author, status, quantity):
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
 
-    update_book(title=title, author=author, image=uploaded_file.read())
+    update_book(title=title, author=author, image=filename)
 
     return redirect(url_for('book_with_cover', title=title, author=author, status=status, quantity=quantity, image=uploaded_file.filename))
 
 
 @app.route('/upload-image-<title>-<author>-<status>-<quantity>-<image>')
 def book_with_cover(title, author, status, quantity, image):
-    return render_template('book_with_cover.html',
+    return render_template('book_information.html',
                            title=title,
                            author=author,
                            quantity=quantity,
