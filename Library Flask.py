@@ -107,7 +107,7 @@ def book_with_cover(title, author, status, quantity, image):
 # the book database and then displays the new book information on its own page.
 @app.route('/create_book', methods=['GET'])
 def render_create_book_form():
-    return render_template("add_edit_book.html")
+    return render_template("add_book.html")
 
 
 @app.route('/create_book', methods=['POST'])
