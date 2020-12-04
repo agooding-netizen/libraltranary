@@ -117,7 +117,7 @@ def upload_files(title, author, status, quantity):
 
     update_book(title=title, author=author, image=filename)
 
-    return redirect(url_for('book_with_cover', title=title, author=author, status=status, quantity=quantity, image=uploaded_file.filename))
+    return redirect(url_for('book_with_cover', title=title, author=author, status=status, quantity=quantity, image=filename))
 
 
 @app.route('/upload-image-<title>-<author>-<status>-<quantity>-<image>')

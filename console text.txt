@@ -28,7 +28,7 @@ create table loans (
 -- LIBRARIAN QUERIES
 -- Adding a book into the catalogue
 insert into books (title, author, quantity) values ('Developing information systems', 'James Cadle', 9);
-insert into books (title, author, quantity, status) values ('Limitless', 'Tim Peaker', 0, 'Unavailable')
+insert into books (title, author, quantity, status) values ('Limitless', 'Tim Peake', 0, 'Unavailable')
 
 -- Edit a books information
 update books set quantity = 1, status = 'Available' where id = 2
