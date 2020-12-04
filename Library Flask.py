@@ -1,8 +1,11 @@
 import imghdr
 import os
 import sqlite3
-from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, url_for
+import flask_login as fl
+from flask import Flask, g, request, render_template, send_from_directory, abort, flash, redirect, url_for
 from werkzeug.utils import secure_filename
+
+login_manager = fl.LoginManager()
 
 DATABASE = 'library.db'
 
@@ -10,12 +13,19 @@ app = Flask(__name__)
 app.config['UPLOAD_PATH'] = 'uploads'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 
+login_manager.init_app(app)
+
 
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 
 @app.teardown_appcontext
@@ -136,17 +146,30 @@ def home():
     return render_template('Homepage.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    form = fl.LoginForm()
+    if form.validate_on_submit():
+        fl.login_user(user)
+
+        flash('Logged in successfully')
+
+        next = request.args.get('next')
+        if not fl.is_safe_url(next):
+            return abort(400)
+
+        return redirect(next or url_for('index'))
     return render_template('Login.html')
 
 
 @app.route('/user-login')
+@login_required
 def user_login():
     return render_template('User-Login.html')
 
 
 @app.route('/librarian-login')
+@login_required
 def librarian_login():
     return render_template('Librarian-Login.html')
 
