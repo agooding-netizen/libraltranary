@@ -64,8 +64,8 @@ body {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  font-family: "Comic Sans", cursive;
+  font-size: 20px;
+  font-family: "Rancho";
 }
 
 .submit_button {
@@ -76,8 +76,8 @@ body {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  font-family: "Comic Sans", cursive;
+  font-size: 20px;
+  font-family: "Rancho";
   margin: 10px;
 }
 
@@ -89,8 +89,8 @@ body {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  font-family: "Comic Sans", cursive;
+  font-size: 20px;
+  font-family: "Rancho";
 }
 
 .vertical_line {

@@ -13,23 +13,23 @@
     <br>
 
     <div class="row">
-        <div class="column" style="background-color:#027da6; text-align: center;">
+        <div class="column" style="text-align: center;">
             <img src="https://api-private.atlassian.com/users/557058:f1397403-0fd8-47a7-9432-e19e16e567cb/avatar?initials=public" width="100" height="100">
             <h2 class="font-effect-neon">User Login</h2>
-            <form action="/user-login" method="GET">
-                <label for="email">Username/Email:</label>
-                <input type="email" id="email" name="email"><br><br>
+            <form method="POST">
+                <label for="username">Username/Email:</label>
+                <input type="text" id="username" name="username"><br><br>
                 <label for="pwd">Password:</label>
                 <input type="password" id="pwd" name="pwd" minlength="8"><br><br>
                 <input type="submit" value="Log In" class="login_button" name="user-login">
             </form>
         </div>
-        <div class="column" style="background-color:#027da6; text-align: center;">
+        <div class="column" style="text-align: center;">
             <img src="https://www.jing.fm/clipimg/full/297-2976720_avatar-for-login-page.png" width="100" height="100">
             <h2 style="color: black" class="font-effect-fire-animation">Libraltranarian Login</h2>
-            <form action="/librarian-login" method="GET">
+            <form method="POST">
                 <label for="librarian_id" style="color: black">Librarian ID:</label>
-                <input type="email" id="librarian_id" name="librarian_id"><br><br>
+                <input type="text" id="librarian_id" name="librarian_id"><br><br>
                 <label for="librarian_pwd" style="color: black">Password:</label>
                 <input type="password" id="librarian_pwd" name="librarian_pwd" minlength="8"><br><br>
                 <input type="submit" value="Log In" class="librarian_button" name="librarian-login">

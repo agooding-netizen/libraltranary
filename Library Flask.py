@@ -1,14 +1,42 @@
 import imghdr
 import os
 import sqlite3
-from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, url_for
+from flask_login import LoginManager, UserMixin, login_required, login_user
+from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, Response, url_for
 from werkzeug.utils import secure_filename
 
 DATABASE = 'library.db'
 
 app = Flask(__name__)
-app.config['UPLOAD_PATH'] = 'uploads'
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.jpeg']
+
+# config
+app.config.update(
+    DEBUG=True,
+    SECRET_KEY='secret_xxx',
+    UPLOAD_PATH='uploads',
+    UPLOAD_EXTENSIONS=['.jpg', '.png', '.jpeg']
+)
+
+# flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+
+# user model
+class User(UserMixin):
+
+    def __init__(self, id):
+        self.id = id
+        self.name = "user" + str(id)
+        self.password = self.name + "_secret"
+
+    def __repr__(self):
+        return "%d/%s/%s" % (self.id, self.name, self.password)
+
+
+# create some users with ids 1 to 20
+users = [User(id) for id in range(1, 21)]
 
 
 def get_db():
@@ -165,17 +193,41 @@ def home():
     return render_template('Homepage.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('Login.html')
+    librarian = False
+
+    if request.method == 'POST':
+        try:
+            username = request.form['username']
+            password = request.form['pwd']
+        except:
+            librarian = True
+            username = request.form['librarian_id']
+            password = request.form['librarian_pwd']
+
+        if password == username + "_secret":
+            id = username.split('user')[1]
+            user = User(id)
+            login_user(user)
+            if not librarian:
+                return redirect("user-login")
+            else:
+                return redirect("librarian-login")
+        else:
+            return abort(401)
+    else:
+        return render_template('Login.html')
 
 
 @app.route('/user-login')
+@login_required
 def user_login():
     return render_template('User-Login.html')
 
 
 @app.route('/librarian-login')
+@login_required
 def librarian_login():
     return render_template('Librarian-Login.html')
 
@@ -189,6 +241,12 @@ def catalogue():
     data = cursor.execute(fetch_book_info)
 
     return render_template('Catalogue.html', table=data)
+
+
+# callback to reload the user object
+@login_manager.user_loader
+def load_user(userid):
+    return User(userid)
 
 
 if __name__ == '__main__':
