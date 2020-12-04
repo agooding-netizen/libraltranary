@@ -200,17 +200,6 @@ def librarian_login():
     return render_template('Librarian-Login.html')
 
 
-@app.route('/member_list', methods=['GET'])
-def member_list():
-    fetch_member_info = """ SELECT member_name, membership_status, number_of_loans from members; """
-
-    database = get_db()
-    cursor = database.cursor()
-    data = cursor.execute(fetch_member_info)
-
-    return render_template('Member_List.html', table=data)
-
-
 @app.route('/catalogue')
 def catalogue():
     fetch_book_info = """ SELECT title, author, quantity, status from books; """
