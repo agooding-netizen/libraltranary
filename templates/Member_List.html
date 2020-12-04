@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member List</title>
+    <link rel="stylesheet" href="static/Stylesheet.css">
+</head>
+<body>
+<div class="main">
+
+    <h1 contenteditable spellcheck="false" class="h1_sign">
+    Member list
+    </h1>
+
+    <table class="center_table">
+        <tr class="tr_center">
+            <th>Name</th>
+            <th>Membership Status</th>
+            <th>Number of Loans</th>
+        </tr>
+        {% for row in table %}
+            <tr class="tr_center">
+                <td class="td_center"> {{row[0]}} </td>
+                <td class="td_center">&emsp;{{row[1]}}&emsp;</td>
+                <td class="td_center">&emsp;{{row[2]}}&emsp;</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
+</body>
+</html>
