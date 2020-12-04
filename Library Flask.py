@@ -1,19 +1,42 @@
 import imghdr
 import os
 import sqlite3
-import flask_login as fl
-from flask import Flask, g, request, render_template, send_from_directory, abort, flash, redirect, url_for
+from flask_login import LoginManager, UserMixin, login_required, login_user
+from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, Response
 from werkzeug.utils import secure_filename
-
-login_manager = fl.LoginManager()
 
 DATABASE = 'library.db'
 
 app = Flask(__name__)
-app.config['UPLOAD_PATH'] = 'uploads'
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 
+# config
+app.config.update(
+    DEBUG=True,
+    SECRET_KEY='secret_xxx',
+    UPLOAD_PATH='uploads',
+    UPLOAD_EXTENSIONS=['.jpg', '.png']
+)
+
+# flask-login
+login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = "login"
+
+
+# user model
+class User(UserMixin):
+
+    def __init__(self, id):
+        self.id = id
+        self.name = "user" + str(id)
+        self.password = self.name + "_secret"
+
+    def __repr__(self):
+        return "%d/%s/%s" % (self.id, self.name, self.password)
+
+
+# create some users with ids 1 to 20
+users = [User(id) for id in range(1, 21)]
 
 
 def get_db():
@@ -21,11 +44,6 @@ def get_db():
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
 
 
 @app.teardown_appcontext
@@ -140,18 +158,26 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = fl.LoginForm()
-    if form.validate_on_submit():
-        fl.login_user(user)
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if password == username + "_secret":
+            id = username.split('user')[1]
+            user = User(id)
+            login_user(user)
+            return redirect("user-login")
+        else:
+            return abort(401)
+    else:
+        return Response('''
+        <form action="" method="post">
+            <p><input type=text name=username>
+            <p><input type=password name=password>
+            <p><input type=submit value=Login>
+        </form>
+        ''')
 
-        flash('Logged in successfully')
-
-        next = request.args.get('next')
-        if not fl.is_safe_url(next):
-            return abort(400)
-
-        return redirect(next or url_for('index'))
-    return render_template('Login.html')
+    return render_template('Login.html', form=form)
 
 
 @app.route('/user-login')
@@ -175,6 +201,12 @@ def catalogue():
     data = cursor.execute(fetch_book_info)
 
     return render_template('Catalogue.html', table=data)
+
+
+# callback to reload the user object
+@login_manager.user_loader
+def load_user(userid):
+    return User(userid)
 
 
 if __name__ == '__main__':
