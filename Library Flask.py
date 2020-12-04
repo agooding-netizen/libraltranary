@@ -166,26 +166,29 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    librarian = False
+
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        try:
+            username = request.form['username']
+            password = request.form['pwd']
+        except:
+            librarian = True
+            username = request.form['librarian_id']
+            password = request.form['librarian_pwd']
+
         if password == username + "_secret":
             id = username.split('user')[1]
             user = User(id)
             login_user(user)
-            return redirect("user-login")
+            if not librarian:
+                return redirect("user-login")
+            else:
+                return redirect("librarian-login")
         else:
             return abort(401)
     else:
-        return Response('''
-        <form action="" method="post">
-            <p><input type=text name=username>
-            <p><input type=password name=password>
-            <p><input type=submit value=Login>
-        </form>
-        ''')
-
-    return render_template('Login.html', form=form)
+        return render_template('Login.html')
 
 
 @app.route('/user-login')
