@@ -50,6 +50,17 @@ def create_book(title, author, status, quantity, image):
     cursor.close()
 
 
+def update_book(title, author, image):
+    update_book_query = """ UPDATE books SET image = ? where title = ? and author = ?"""
+    data_tuple = (image, title, author)
+
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute(update_book_query, data_tuple)
+    database.commit()
+    cursor.close()
+
+
 def validate_image(stream):
     header = stream.read(512)  # 512 bytes should be enough for a header check
     stream.seek(0)  # reset stream pointer
@@ -58,15 +69,16 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
-
-@app.route('/upload_image')
-def index():
+# Issue is - cannot display images that are in a different place to where the form collects the image from
+# Everything else works correctly
+@app.route('/upload_image-<title>-<author>-<status>-<quantity>')
+def index(title, author, status, quantity):
     files = os.listdir(app.config['UPLOAD_PATH'])
-    return render_template('book_cover.html', files=files)
+    return render_template('upload_image.html', title=title, author=author, status=status, quantity=quantity, files=files)
 
 
-@app.route('/upload_image', methods=['POST'])
-def upload_files():
+@app.route('/upload_image-<title>-<author>-<status>-<quantity>', methods=['POST'])
+def upload_files(title, author, status, quantity):
     uploaded_file = request.files['file']
     filename = secure_filename(uploaded_file.filename)
     if filename != '':
@@ -75,7 +87,20 @@ def upload_files():
                 file_ext != validate_image(uploaded_file.stream):
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-    return redirect(url_for('index'))
+
+    update_book(title=title, author=author, image=uploaded_file.read())
+
+    return redirect(url_for('book_with_cover', title=title, author=author, status=status, quantity=quantity, image=uploaded_file.filename))
+
+
+@app.route('/upload-image-<title>-<author>-<status>-<quantity>-<image>')
+def book_with_cover(title, author, status, quantity, image):
+    return render_template('book_with_cover.html',
+                           title=title,
+                           author=author,
+                           quantity=quantity,
+                           status=status,
+                           image=image)
 
 
 # The two app routes below do the following:
@@ -98,24 +123,20 @@ def get_book_information():
     else:
         status = 'Unavailable'
 
+    image_blob = None
+
+    create_book(title, author, status, quantity, image_blob)
+
     if image_requested == "Yes":
-        return redirect(url_for('index'))
+        return redirect(url_for('index', title=title, author=author, status=status, quantity=quantity))
 
-    else:
-        filename = ""
-        image_blob = None
-
-        create_book(title, author, status, quantity, image_blob)
-
-        return render_template('book_information.html',
-                               title=title,
-                               author=author,
-                               quantity=quantity,
-                               status=status,
-                               image="/uploads/" + filename)
+    return render_template('book_information.html',
+                           title=title,
+                           author=author,
+                           quantity=quantity,
+                           status=status)
 
 
-# TODO Need to make this a hyperlink from book information
 @app.route('/uploads/<filename>')
 def upload(filename):
     return send_from_directory(app.config['UPLOAD_PATH'], filename)
