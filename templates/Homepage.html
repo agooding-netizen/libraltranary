@@ -21,6 +21,9 @@
             <input type="text" placeholder="Title/Author" id="name" name="search">
         </div>
     </form>
+    {% if not found %}
+        No items match search, please try again
+    {% endif %}
     <br>
 
     <div class="navbuttons" style="text-align:center;">
