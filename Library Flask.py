@@ -216,6 +216,7 @@ def failed_search():
 
 @app.route('/')
 def home():
+    # This doesnt currently work because current user isn't updating correctly
     if current_user.is_authenticated:
         return render_template('Homepage_Authenticated.html', found=True)
     else:
