@@ -63,20 +63,6 @@ with app.app_context():
     db.commit()
 
 
-def create_users_from_db():
-    get_user_query = """ SELECT id from members """
-    database = get_db()
-    cursor = database.cursor()
-    cursor.execute(get_user_query)
-
-    users = cursor.fetchall()
-
-    return users
-
-
-USERS = [User(id) for id in create_users_from_db()]
-
-
 def create_book(title, author, status, quantity, image):
     create_book_query = """ INSERT INTO books (title, author, status, quantity, image) VALUES (?, ?, ?, ?, ?)"""
     data_tuple = (title, author, status, quantity, image)
