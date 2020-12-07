@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Creation</title>
+    <link rel="stylesheet" href="static/Stylesheet.css">
+</head>
+<body>
+<div class="menunav">
+  <a href="/">Home</a>
+  <a class="active" href="/catalogue">Catalogue</a>
+  <a href="/login">Log In</a>
+</div>
+
+<div class="main">
+
+    <h1 contenteditable spellcheck="false" class="h1_sign">
+    Account creation
+    </h1>
+
+    <form action="/create_account" method=post>
+        <div class="form-group">
+            <label for="mem_name">Name:&emsp;</label>
+            <input type="text" id="mem_name" name="mem_name"><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password"><br><br>
+            <label for="check">Re-enter Password:</label>
+            <input type="password" id="check" name="check"><br><br>
+            <input type="submit" class="submit_button"><br><br>
+            <script>
+            var password = document.getElementById("password"), confirm_password = document.getElementById("check");
+            function validatePassword(){
+                if(password.value != confirm_password.value) {
+                    confirm_password.setCustomValidity("Passwords Don't Match");
+                }
+                else {
+                    confirm_password.setCustomValidity('');
+                }
+            }
+            password.onchange = validatePassword;
+            confirm_password.onkeyup = validatePassword;
+            </script>
+        </div>
+     </form>
+
+</div>

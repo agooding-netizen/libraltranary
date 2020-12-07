@@ -15,8 +15,8 @@ create table members (
     id integer primary key autoincrement not null,
     member_name varchar(255) not null,
     password varchar(255) not null,
-    membership_status varchar(255) not null,
-    number_of_loans integer not null
+    membership_status varchar(255) not null default ('Active'),
+    number_of_loans integer not null default (0)
 )
 
 create table loans (

@@ -243,18 +243,28 @@ def login():
             else:
                 return redirect("librarian-login")
 
-        '''if password == username + "_secret":
-            id = username.split('user')[1]
-            user = User(id)
-            login_user(user)
-            if not librarian:
-                return redirect("user-login")
-            else:
-                return redirect("librarian-login")
-        else:
-            return abort(401)'''
     else:
         return render_template('Login.html')
+
+
+@app.route('/create_account', methods=['GET', 'POST'])
+def create_user():
+    if request.method == 'POST':
+        username = request.form['mem_name']
+        password = request.form['password']
+
+        create_user_query = """ INSERT INTO members (member_name, password) VALUES (?, ?)"""
+        data_tuple = (username, password)
+
+        database = get_db()
+        cursor = database.cursor()
+        cursor.execute(create_user_query, data_tuple)
+        database.commit()
+        cursor.close()
+
+        return redirect(url_for('login'))
+    else:
+        return render_template('create_account.html')
 
 
 @app.route('/user-login')
