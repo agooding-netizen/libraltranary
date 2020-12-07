@@ -245,7 +245,7 @@ def login():
         data = cursor.fetchone()
 
         if data is None:
-            return render_template('Login.html', invalid=True)
+            return render_template('Login.html', invalid=True, librarian=librarian)
         elif password == data[2] and member_type == data[3]:
             id = data[0]
             user = User(id)
