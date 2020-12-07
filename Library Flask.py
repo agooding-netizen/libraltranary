@@ -62,14 +62,15 @@ with app.app_context():
             author varchar(255) not null,
             quantity integer not null,
             status varchar(255) not null default('Available'),
+            isbn integer not null default(0000000000),
             image text
 )''')
     db.commit()
 
 
-def create_book(title, author, status, quantity, image):
-    create_book_query = """ INSERT INTO books (title, author, status, quantity, image) VALUES (?, ?, ?, ?, ?)"""
-    data_tuple = (title, author, status, quantity, image)
+def create_book(title, author, status, quantity, isbn, image):
+    create_book_query = """ INSERT INTO books (title, author, status, quantity, isbn, image) VALUES (?, ?, ?, ?, ?, ?)"""
+    data_tuple = (title, author, status, quantity, isbn, image)
 
     database = get_db()
     cursor = database.cursor()
@@ -78,9 +79,9 @@ def create_book(title, author, status, quantity, image):
     cursor.close()
 
 
-def update_book(title, author, image):
-    update_book_query = """ UPDATE books SET image = ? where title = ? and author = ?"""
-    data_tuple = (image, title, author)
+def update_book(isbn, image):
+    update_book_query = """ UPDATE books SET image = ? where isbn = ?"""
+    data_tuple = (image, isbn)
 
     database = get_db()
     cursor = database.cursor()
@@ -98,14 +99,14 @@ def validate_image(stream):
     return '.' + (format if format != 'jpeg' else 'jpg')
 
 # Picture uploads only work if you upload a NEW picture. Cannot pick one that exists in the folder with the same name.
-@app.route('/upload_image-<title>-<author>-<status>-<quantity>')
-def index(title, author, status, quantity):
+@app.route('/upload_image-<title>-<author>-<isbn>-<status>-<quantity>')
+def index(title, author, status, isbn, quantity):
     files = os.listdir(app.config['UPLOAD_PATH'])
-    return render_template('upload_image.html', title=title, author=author, status=status, quantity=quantity, files=files)
+    return render_template('upload_image.html', title=title, author=author, ibn=isbn, status=status, quantity=quantity, files=files)
 
 
-@app.route('/upload_image-<title>-<author>-<status>-<quantity>', methods=['POST'])
-def upload_files(title, author, status, quantity):
+@app.route('/upload_image-<title>-<author>-<isbn>-<status>-<quantity>', methods=['POST'])
+def upload_files(title, author, status, isbn, quantity):
     uploaded_file = request.files['file']
     filename = secure_filename(uploaded_file.filename)
     if filename != '':
@@ -115,19 +116,30 @@ def upload_files(title, author, status, quantity):
             abort(400)
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
 
-    update_book(title=title, author=author, image=filename)
+    update_book(isbn=isbn, image=filename)
 
-    return redirect(url_for('book_with_cover', title=title, author=author, status=status, quantity=quantity, image=filename))
+    return redirect(url_for('book_with_cover', title=title, author=author, isbn=isbn, status=status, quantity=quantity, image=filename))
 
 
-@app.route('/upload-image-<title>-<author>-<status>-<quantity>-<image>')
-def book_with_cover(title, author, status, quantity, image):
+@app.route('/upload-image-<title>-<author>-<isbn>-<status>-<quantity>-<image>')
+def book_with_cover(title, author, status, isbn, quantity, image):
     return render_template('book_information.html',
                            title=title,
                            author=author,
                            quantity=quantity,
                            status=status,
+                           isbn=isbn,
                            image=image)
+
+
+@app.route('/<title>-<author>-<isbn>-<status>-<quantity>')
+def book_without_cover(title, author, status, isbn, quantity):
+    return render_template('book_information.html',
+                           title=title,
+                           author=author,
+                           quantity=quantity,
+                           status=status,
+                           isbn=isbn)
 
 
 # The two app routes below do the following:
@@ -142,6 +154,7 @@ def render_create_book_form():
 def get_book_information():
     title = request.form.get('title')
     author = request.form.get('author')
+    isbn = request.form.get('isbn')
     quantity = int(request.form.get('copies'))
     image_requested = request.form.get('image_request')
 
@@ -150,18 +163,17 @@ def get_book_information():
     else:
         status = 'Unavailable'
 
+    if isbn == "":
+        isbn = "0000000000"
+
     image_blob = None
 
-    create_book(title, author, status, quantity, image_blob)
+    create_book(title, author, status, quantity, isbn, image_blob)
 
     if image_requested == "Yes":
-        return redirect(url_for('index', title=title, author=author, status=status, quantity=quantity))
+        return redirect(url_for('index', title=title, author=author, isbn=isbn, status=status, quantity=quantity))
 
-    return render_template('book_information.html',
-                           title=title,
-                           author=author,
-                           quantity=quantity,
-                           status=status)
+    return redirect(url_for('book_without_cover', title=title, author=author, isbn=isbn, status=status, quantity=quantity))
 
 
 @app.route('/uploads/<filename>')
