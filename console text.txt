@@ -7,8 +7,7 @@ create table books (
     author varchar(255) not null,
     quantity integer not null,
     status varchar(255) not null default('Available'),
-    isbn integer not null default(0000000000),
-    image text
+    image blob
 )
 
 create table members (
@@ -17,6 +16,12 @@ create table members (
     password varchar(255) not null,
     membership_status varchar(255) not null,
     number_of_loans integer not null
+)
+
+create table librarians (
+    id integer primary key autoincrement not null,
+    admin_name varchar(255) not null,
+    password varchar(255) not null
 )
 
 create table loans (
@@ -40,6 +45,9 @@ delete from books where id= 1;
 
 -- Adding a member into the registry
 insert into members (member_name, password, membership_status, number_of_loans) values ('Lewis Fisher', 'loginyes', 'Active', 0);
+
+-- Adding a librarian into the registry
+insert into librarians (admin_name, password) values ('Charlie Parsons', 'ipassedmytest');
 
 -- MEMBER QUERIES
 -- Adding a loan instance to the loans table (Borrowing a book)
@@ -65,4 +73,5 @@ select title, member_name from loans JOIN books ON books.id = loans.book, member
 -- delete the tables
 drop table books;
 drop table members;
+drop table librarians;
 drop table loans;
