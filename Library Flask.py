@@ -262,7 +262,7 @@ def login():
             user.permission_check(librarian)
 
             login_user(user)
-            return redirect(url_for('post_login', user=user))
+            return redirect(url_for('post_login', name=user.name, is_librarian=user.is_librarian))
 
         '''if password == username + "_secret":
             id = username.split('user')[1]
@@ -278,13 +278,13 @@ def login():
         return render_template('Login.html')
 
 
-@app.route('/post-login-<user>')
+@app.route('/login-<name>-<is_librarian>')
 @login_required
-def post_login(user):
-    if user.is_librarian:
-        return render_template('Librarian-Login.html', user=current_user)
+def post_login(is_librarian, name):
+    if is_librarian == 'True':
+        return render_template('Librarian-Login.html', user=name)
     else:
-        return render_template('User-Login.html', user=current_user)
+        return render_template('User-Login.html', user=name)
 
 
 @app.route('/librarian-login')

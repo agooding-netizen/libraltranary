@@ -301,4 +301,30 @@ body {
 .menunav a.active {
   background-color: #63BEF3;
   color: white;
+}   
+
+.menunav .icon {
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .menunav a:not(:first-child) {display: none;}
+  .menunav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .menunav.responsive {position: relative;}
+  .menunav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .menunav.responsive a {
+    float: none;
+    display: block;
+    text-align: center;
+  }
 }
