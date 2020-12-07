@@ -2,7 +2,7 @@ import imghdr
 import os
 import sqlite3
 from flask_login import LoginManager, UserMixin, login_required, login_user
-from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, Response, url_for
+from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, url_for
 from werkzeug.utils import secure_filename
 
 DATABASE = 'library.db'
@@ -33,10 +33,6 @@ class User(UserMixin):
 
     def __repr__(self):
         return "%d/%s/%s" % (self.id, self.name, self.password)
-
-
-# create some users with ids 1 to 20
-users = [User(id) for id in range(1, 21)]
 
 
 def get_db():
@@ -191,18 +187,26 @@ def find_book_search():
     cursor.execute(find_book_query, (search,))
 
     data = cursor.fetchone()
-    if len(data) == 0:
+    if data is None:
         find_book_query = """ SELECT title, author, quantity, status, image FROM books WHERE author LIKE ?; """
         cursor.execute(find_book_query, (search,))
+
         data = cursor.fetchone()
+    if data is None:
+        return redirect(url_for('failed_search'))
 
     return render_template('book_information.html', title=data[0], author=data[1], quantity=data[2], status=data[3],
                            image=data[4])
 
 
+@app.route('/search-failed', methods=['GET', 'POST'])
+def failed_search():
+    return render_template('Homepage.html', found=False)
+
+
 @app.route('/')
 def home():
-    return render_template('Homepage.html')
+    return render_template('Homepage.html', found=True)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -218,7 +222,25 @@ def login():
             username = request.form['librarian_id']
             password = request.form['librarian_pwd']
 
-        if password == username + "_secret":
+        find_user = """ SELECT id, member_name, password FROM members WHERE member_name = ?; """
+
+        database = get_db()
+        cursor = database.cursor()
+        cursor.execute(find_user, (username,))
+        data = cursor.fetchone()
+
+        if data is None:
+            return abort(401)
+        elif password == data[2]:
+            id = data[0]
+            user = User(id)
+            login_user(user)
+            if not librarian:
+                return redirect("user-login")
+            else:
+                return redirect("librarian-login")
+
+        '''if password == username + "_secret":
             id = username.split('user')[1]
             user = User(id)
             login_user(user)
@@ -227,7 +249,7 @@ def login():
             else:
                 return redirect("librarian-login")
         else:
-            return abort(401)
+            return abort(401)'''
     else:
         return render_template('Login.html')
 
