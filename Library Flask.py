@@ -63,6 +63,20 @@ with app.app_context():
     db.commit()
 
 
+def create_users_from_db():
+    get_user_query = """ SELECT id from members """
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute(get_user_query)
+
+    users = cursor.fetchall()
+
+    return users
+
+
+USERS = [User(id) for id in create_users_from_db()]
+
+
 def create_book(title, author, status, quantity, image):
     create_book_query = """ INSERT INTO books (title, author, status, quantity, image) VALUES (?, ?, ?, ?, ?)"""
     data_tuple = (title, author, status, quantity, image)
@@ -211,7 +225,7 @@ def login():
             username = request.form['librarian_id']
             password = request.form['librarian_pwd']
 
-        find_user = """ SELECT member_name, password FROM members WHERE member_name = ?; """
+        find_user = """ SELECT id, member_name, password FROM members WHERE member_name = ?; """
 
         database = get_db()
         cursor = database.cursor()
@@ -220,8 +234,8 @@ def login():
 
         if data is None:
             return abort(401)
-        elif password == data[1]:
-            id = username.split('user')[1]
+        elif password == data[2]:
+            id = data[0]
             user = User(id)
             login_user(user)
             if not librarian:
