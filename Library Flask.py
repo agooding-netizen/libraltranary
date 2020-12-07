@@ -216,7 +216,6 @@ def failed_search():
 
 @app.route('/')
 def home():
-    # This doesnt currently work because current user isn't updating correctly
     if current_user.is_authenticated:
         return render_template('Homepage_Authenticated.html', found=True)
     else:
@@ -244,9 +243,6 @@ def login():
         cursor = database.cursor()
         cursor.execute(find_user, (username,))
         data = cursor.fetchone()
-
-    #    if member_type != data[3]:
-    #        return redirect()
 
         if data is None:
             return render_template('Login.html', invalid=True)
