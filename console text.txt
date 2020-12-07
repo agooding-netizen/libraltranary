@@ -14,14 +14,9 @@ create table members (
     id integer primary key autoincrement not null,
     member_name varchar(255) not null,
     password varchar(255) not null,
-    membership_status varchar(255) not null,
-    number_of_loans integer not null
-)
-
-create table librarians (
-    id integer primary key autoincrement not null,
-    admin_name varchar(255) not null,
-    password varchar(255) not null
+    membership_status varchar(255) not null default('Active'),
+    number_of_loans integer not null default(0),
+    member_type varchar(255) not null default('User')
 )
 
 create table loans (
@@ -47,7 +42,7 @@ delete from books where id= 1;
 insert into members (member_name, password, membership_status, number_of_loans) values ('Lewis Fisher', 'loginyes', 'Active', 0);
 
 -- Adding a librarian into the registry
-insert into librarians (admin_name, password) values ('Charlie Parsons', 'ipassedmytest');
+insert into members (member_name, password, member_type) values ('Charlie Parsons', 'ipassedmytest', 'Librarian');
 
 -- MEMBER QUERIES
 -- Adding a loan instance to the loans table (Borrowing a book)
@@ -56,8 +51,8 @@ insert into loans (book, member, due_date) values (1, 1, '2020-12-01');
 -- Deleting a loan instance (Returning a book)
 delete from loans where book = 1;
 
--- Editing membership details
-update members set member_name = 'Andy Gooding';
+-- Deleting membership details
+delete from members where member_name = 'Lewis Fisher';
 ----------------------------------------------------------------------------------------------------------------------
 -- Viewing the tables
 select * from books;
@@ -73,5 +68,4 @@ select title, member_name from loans JOIN books ON books.id = loans.book, member
 -- delete the tables
 drop table books;
 drop table members;
-drop table librarians;
 drop table loans;

@@ -26,7 +26,7 @@ login_manager.login_view = "login"
 # user model
 class User(UserMixin):
     def __init__(self, id):
-        find_user = """ SELECT member_name, password FROM members WHERE id = ?; """
+        find_user = """ SELECT member_name, password, member_type FROM members WHERE id = ?; """
 
         database = get_db()
         cursor = database.cursor()
@@ -38,23 +38,11 @@ class User(UserMixin):
         self.password = data[1]
         self.is_librarian = False
 
+        if data[2] == "Librarian":
+            self.is_librarian = True
+
     def __repr__(self):
         return "%d/%s/%s" % (self.id, self.name, self.password)
-
-    def permission_check(self, librarian):
-        self.is_librarian = librarian
-
-        if librarian:
-            find_user = """ SELECT admin_name, password FROM librarians WHERE id = ?; """
-
-            database = get_db()
-            cursor = database.cursor()
-            cursor.execute(find_user, (self.id,))
-            data = cursor.fetchone()
-
-            self.name = data[0]
-            self.password = data[1]
-
 
 
 def get_db():
@@ -236,55 +224,50 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    member_type = "User"
     librarian = False
 
     if request.method == 'POST':
         try:
             username = request.form['username']
             password = request.form['pwd']
-            find_user = """ SELECT id, member_name, password FROM members WHERE member_name = ?; """
         except:
+            member_type = "Librarian"
             librarian = True
             username = request.form['librarian_id']
             password = request.form['librarian_pwd']
-            find_user = """ SELECT id, admin_name, password FROM librarians WHERE admin_name = ?; """
+
+        find_user = """ SELECT id, member_name, password, member_type FROM members WHERE member_name = ?; """
 
         database = get_db()
         cursor = database.cursor()
         cursor.execute(find_user, (username,))
         data = cursor.fetchone()
 
+    #    if member_type != data[3]:
+    #        return redirect()
+
         if data is None:
-            return abort(401)
-        elif password == data[2]:
+            return render_template('Login.html', invalid=True)
+        elif password == data[2] and member_type == data[3]:
             id = data[0]
             user = User(id)
-            user.permission_check(librarian)
-
             login_user(user)
-            return redirect(url_for('post_login', name=user.name, is_librarian=user.is_librarian))
-
-        '''if password == username + "_secret":
-            id = username.split('user')[1]
-            user = User(id)
-            login_user(user)
-            if not librarian:
-                return redirect("user-login")
-            else:
-                return redirect("librarian-login")
+            return redirect('welcome')
         else:
-            return abort(401)'''
+            return render_template('Login.html', invalid=True, librarian=librarian)
+
     else:
-        return render_template('Login.html')
+        return render_template('Login.html', invalid=False, librarian=False)
 
 
-@app.route('/login-<name>-<is_librarian>')
+@app.route('/welcome')
 @login_required
-def post_login(is_librarian, name):
-    if is_librarian == 'True':
-        return render_template('Librarian-Login.html', user=name)
+def post_login():
+    if current_user.is_librarian:
+        return render_template('Librarian-Login.html')
     else:
-        return render_template('User-Login.html', user=name)
+        return render_template('User-Login.html')
 
 
 @app.route('/librarian-login')
