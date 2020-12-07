@@ -22,18 +22,30 @@
             <td class="td_book_info">
                 Title <br/>
                 Author <br/>
+                {% if isbn == "0000000000" %}
+                    <br/>
+                {% else %}
+                    ISBN <br/>
+                {% endif %}
                 Quantity <br/>
                 Status </td>
             <td class="td_book_info">
                 {{title}} <br/>
                 {{author}} <br/>
+                {% if isbn == "0000000000" %}
+                    <br/>
+                {% else %}
+                    {{isbn}} <br/>
+                {% endif %}
                 {{quantity}} <br/>
                 {{status}} </td>
             <td>
                 {% if image %}
                     <img src="{{url_for('upload', filename=image)}}" width="200" height="300">
-                {% else %}
+                {% elif isbn == "0000000000" %}
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/450px-No_image_available.svg.png" width="200" height="300">
+                {% else %}
+                    <img src="http://covers.openlibrary.org/b/isbn/{{isbn}}-M.jpg" width="200" height="300">
                 {% endif %}
             </td>
         </tr>
@@ -48,8 +60,6 @@
             <button class="centered_button" type="button">Reserve</button>
         {% endif %}
     </div>
-
-    <button class="centered_button" type="button" onclick="window.location.href='/catalogue'">Catalogue</button>
 
 </div>
 
