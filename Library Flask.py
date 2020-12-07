@@ -25,14 +25,36 @@ login_manager.login_view = "login"
 
 # user model
 class User(UserMixin):
-
     def __init__(self, id):
+        find_user = """ SELECT member_name, password FROM members WHERE id = ?; """
+
+        database = get_db()
+        cursor = database.cursor()
+        cursor.execute(find_user, (id,))
+        data = cursor.fetchone()
+
         self.id = id
-        self.name = "user" + str(id)
-        self.password = self.name + "_secret"
+        self.name = data[0]
+        self.password = data[1]
+        self.is_librarian = False
 
     def __repr__(self):
         return "%d/%s/%s" % (self.id, self.name, self.password)
+
+    def permission_check(self, librarian):
+        self.is_librarian = librarian
+
+        if librarian:
+            find_user = """ SELECT admin_name, password FROM librarians WHERE id = ?; """
+
+            database = get_db()
+            cursor = database.cursor()
+            cursor.execute(find_user, (self.id,))
+            data = cursor.fetchone()
+
+            self.name = data[0]
+            self.password = data[1]
+
 
 
 def get_db():
@@ -65,7 +87,7 @@ with app.app_context():
 
 
 def create_book(title, author, status, quantity, isbn, image):
-    create_book_query = """ INSERT INTO books (title, author, status, quantity, isbn, image) VALUES (?, ?, ?, ?, ?, ?)"""
+    create_book_query = """ INSERT INTO books (title, author, status, quantity, isbn, image) VALUES (?, ?, ?, ?, ?, ?) """
     data_tuple = (title, author, status, quantity, isbn, image)
 
     database = get_db()
@@ -220,12 +242,12 @@ def login():
         try:
             username = request.form['username']
             password = request.form['pwd']
+            find_user = """ SELECT id, member_name, password FROM members WHERE member_name = ?; """
         except:
             librarian = True
             username = request.form['librarian_id']
             password = request.form['librarian_pwd']
-
-        find_user = """ SELECT id, member_name, password FROM members WHERE member_name = ?; """
+            find_user = """ SELECT id, admin_name, password FROM librarians WHERE admin_name = ?; """
 
         database = get_db()
         cursor = database.cursor()
@@ -237,11 +259,10 @@ def login():
         elif password == data[2]:
             id = data[0]
             user = User(id)
+            user.permission_check(librarian)
+
             login_user(user)
-            if not librarian:
-                return redirect("user-login")
-            else:
-                return redirect("librarian-login")
+            return redirect(url_for('post_login', user=user))
 
         '''if password == username + "_secret":
             id = username.split('user')[1]
@@ -257,10 +278,13 @@ def login():
         return render_template('Login.html')
 
 
-@app.route('/user-login')
+@app.route('/post-login-<user>')
 @login_required
-def user_login():
-    return render_template('User-Login.html')
+def post_login(user):
+    if user.is_librarian:
+        return render_template('Librarian-Login.html', user=current_user)
+    else:
+        return render_template('User-Login.html', user=current_user)
 
 
 @app.route('/librarian-login')
