@@ -7,12 +7,13 @@ create table books (
     author varchar(255) not null,
     quantity integer not null,
     status varchar(255) not null default('Available'),
-    image text
+    image blob
 )
 
 create table members (
     id integer primary key autoincrement not null,
     member_name varchar(255) not null,
+    password varchar(255) not null,
     membership_status varchar(255) not null,
     number_of_loans integer not null
 )
@@ -37,7 +38,7 @@ update books set quantity = 1, status = 'Available' where id = 2
 delete from books where id= 1;
 
 -- Adding a member into the registry
-insert into members (member_name, membership_status, number_of_loans) values ('Lewis Fisher', 'Low Bandwith', 1);
+insert into members (member_name, password, membership_status, number_of_loans) values ('Lewis Fisher', 'loginyes', 'Active', 0);
 
 -- MEMBER QUERIES
 -- Adding a loan instance to the loans table (Borrowing a book)

@@ -35,10 +35,6 @@ class User(UserMixin):
         return "%d/%s/%s" % (self.id, self.name, self.password)
 
 
-# create some users with ids 1 to 20
-users = [User(id) for id in range(1, 21)]
-
-
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -214,7 +210,25 @@ def login():
             username = request.form['librarian_id']
             password = request.form['librarian_pwd']
 
-        if password == username + "_secret":
+        find_user = """ SELECT id, member_name, password FROM members WHERE member_name = ?; """
+
+        database = get_db()
+        cursor = database.cursor()
+        cursor.execute(find_user, (username,))
+        data = cursor.fetchone()
+
+        if data is None:
+            return abort(401)
+        elif password == data[2]:
+            id = data[0]
+            user = User(id)
+            login_user(user)
+            if not librarian:
+                return redirect("user-login")
+            else:
+                return redirect("librarian-login")
+
+        '''if password == username + "_secret":
             id = username.split('user')[1]
             user = User(id)
             login_user(user)
@@ -223,7 +237,7 @@ def login():
             else:
                 return redirect("librarian-login")
         else:
-            return abort(401)
+            return abort(401)'''
     else:
         return render_template('Login.html')
 
