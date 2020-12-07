@@ -6,11 +6,24 @@
     <link rel="stylesheet" href="static/Stylesheet.css">
 </head>
 <body>
-<div class="menunav">
+<div class="menunav" id="myMenunav">
   <a href="/">Home</a>
   <a class="active" href="/catalogue">Catalogue</a>
   <a href="/login">Log In</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+        <img src="https://www.barberemerson.com/images/fa_bars.png" width="17" height="17"></a>
 </div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myMenunav");
+  if (x.className === "menunav") {
+    x.className += " responsive";
+  } else {
+    x.className = "menunav";
+  }
+}
+</script>
 
 <div class="main">
 
