@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div class="main">
+    <head>
+        <meta charset="UTF-8">
+        <title>Libraltranary</title>
+        <link rel="stylesheet" href="static/Stylesheet.css">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    </head>
+
+
+    <h1 style="text-align:center; font-size:48px" class="font-effect-fire-animation">
+        <img src="https://cdn.lowgif.com/full/b7f020061303153f-.gif" width="50" height="50">
+        &emsp; LIBRALTRANARY &emsp;
+        <img src="https://cdn.lowgif.com/full/b7f020061303153f-.gif" style="text-align: right" width="50" height="50">
+    </h1>
+
+    <form action="/view_book" method="post">
+        <div class="topnav" style="text-align:center;">
+            <input type="text" placeholder="Title/Author" id="name" name="search">
+        </div>
+    </form>
+    {% if not found %}
+        No items match search, please try again
+    {% endif %}
+    <br>
+
+    <div class="navbuttons" style="text-align:center;">
+        <button class="button" type="button" onclick="window.location.href='/catalogue'">Catalogue</button>
+      <button class="button" type="button" onclick="window.location.href='/login'">Log In</button>
+    </div>
+
+    <br>
+
+    <table>
+        <tr>
+            <td class="td_home">
+                Opening hours: <br>
+                <br>
+                Monday: 08:00 - 20:00 <br>
+                Tuesday: 08:00 - 20:00 <br>
+                Wednesday: 08:00 - 20:00 <br>
+                Thursday: 08:00 - 20:00 <br>
+                Friday: 08:00 - 20:00 <br>
+                Saturday: 08:00 - 20:00 <br>
+                Sunday: 10:00 - 16:00
+            </td>
+            <td class="td_home">
+                <div id = "map" style = "width: 300px; height: 250px; float: right"></div>
+                <script src = "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+                <script>
+                    // Creating map options
+                    var mapOptions = {
+                        center: [39.98220409508349, -76.17450909348878],
+                        zoom: 17
+                    }
+
+                    // Creating a map object
+                    var map = new L.map('map', mapOptions);
+
+                    // Creating a Layer object
+                    var layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+
+                    // Adding layer to the map
+                    map.addLayer(layer);
+                </script>
+            </td>
+        </tr>
+    </table>
+
+    <p class="address_info">
+        Libraltranary <br>
+        22 Book Lane <br>
+        Bookville <br>
+        Democratic Republic Of Books <br>
+        BO1 1OK
+    </p>
+    </div>
+
+
+
+</body>
+</html>
+

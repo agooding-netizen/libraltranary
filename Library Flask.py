@@ -1,7 +1,7 @@
 import imghdr
 import os
 import sqlite3
-from flask_login import LoginManager, UserMixin, login_required, login_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, logout_user
 from flask import Flask, g, request, render_template, send_from_directory, abort, redirect, url_for
 from werkzeug.utils import secure_filename
 
@@ -194,7 +194,10 @@ def failed_search():
 
 @app.route('/')
 def home():
-    return render_template('Homepage.html', found=True)
+    if current_user.is_authenticated:
+        return render_template('Homepage_Authenticated.html', found=True)
+    else:
+        return render_template('Homepage.html', found=True)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -269,6 +272,13 @@ def catalogue():
 @login_manager.user_loader
 def load_user(userid):
     return User(userid)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
 
 
 if __name__ == '__main__':
